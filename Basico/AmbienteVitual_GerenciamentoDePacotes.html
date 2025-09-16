@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Guia rápido: venv, pip e requirements.txt</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;max-width:900px;margin:32px auto;padding:0 20px;color:#111}
+    h1{font-size:1.6rem;margin-bottom:0.2rem}
+    h2{font-size:1.1rem;margin-top:1.1rem}
+    pre{background:#f6f8fa;border:1px solid #e1e4e8;padding:12px;border-radius:6px;overflow:auto}
+    code{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .note{background:#fff8c5;border-left:4px solid #ffd33d;padding:10px;margin:12px 0;border-radius:4px}
+    ul{margin-top:0}
+  </style>
+</head>
+<body>
+  <h1>Guia rápido — criar venv e gerenciar pacotes com pip</h1>
+  <p>Este é um roteiro simples para criar um ambiente virtual (venv), instalar pacotes com <code>pip</code> e salvar/recuperar dependências com <code>requirements.txt</code>.</p>
+
+  <h2>1) Criar a pasta do projeto (exemplo)</h2>
+  <pre><code># no seu terminal
+mkdir -p FMD_Python/Games/Megamania
+cd FMD_Python/Games/Megamania
+</code></pre>
+
+  <h2>2) Criar o ambiente virtual</h2>
+  <pre><code># cria a pasta .venv com o interpretador atual
+python -m venv .venv
+</code></pre>
+
+  <h2>3) Ativar o ambiente virtual</h2>
+  <p>Depois de ativar, o prompt mostra o nome do ambiente (ex.: <code>(.venv)</code>).</p>
+  <pre><code># Linux / macOS
+source .venv/bin/activate
+
+# Windows (PowerShell)
+.venv\Scripts\Activate.ps1
+
+# Windows (cmd.exe)
+.venv\Scripts\activate.bat
+</code></pre>
+
+  <h2>4) Instalar pacotes com <code>pip</code></h2>
+  <pre><code># exemplo: instalar requests
+pip install requests
+
+# instalar uma versão específica
+pip install requests==2.31.0
+</code></pre>
+
+  <h2>5) Ver pacotes instalados</h2>
+  <pre><code>pip list
+# ou
+pip show nome_do_pacote
+</code></pre>
+
+  <h2>6) Salvar dependências (criar requirements.txt)</h2>
+  <pre><code># gera requirements.txt com versões fixas
+pip freeze &gt; requirements.txt
+</code></pre>
+
+  <div class="note">
+    <strong>Dica:</strong> salve sempre o <code>requirements.txt</code> no controle de versão (git) para reproduzir o ambiente em outra máquina.
+  </div>
+
+  <h2>7) Recriar o ambiente em outra máquina</h2>
+  <pre><code># no destino
+python -m venv .venv
+source .venv/bin/activate   # ou equivalente no Windows
+pip install -r requirements.txt
+</code></pre>
+
+  <h2>8) Desativar o ambiente</h2>
+  <pre><code>deactivate
+</code></pre>
+
+  <h2>9) Exemplo mínimo de .gitignore para projetos Python</h2>
+  <pre><code>.venv/
+__pycache__/
+*.pyc
+.env
+</code></pre>
+
+  <h2>10) Fluxo sugerido (resumido)</h2>
+  <ul>
+    <li>Criar pasta do projeto</li>
+    <li>python -m venv .venv</li>
+    <li>Ativar, instalar pacotes com pip</li>
+    <li>pip freeze &gt; requirements.txt</li>
+    <li>Commitar código + requirements.txt</li>
+  </ul>
+</body>
+</html>
