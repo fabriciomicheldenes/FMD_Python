@@ -1,25 +1,25 @@
-from random import choice
 from Source.TicTacToeModel import TicTacToeModel
 from Source.TicTacToeController import TicTacToeController
 from Source.TerminalView import TerminalView
-from Source.CursesView import CursesView
-
 
 def main():
     model = TicTacToeModel()
+    controller = TicTacToeController(model)
+    view = TerminalView(controller)
 
-    # TODO: Escolha a view (Termina, Curses, TKinter ou Qt)
-    choice = input("Escolha a interface (1 = Terminal, 2 = Curses): ")
-    if choice == "1 (default)":
-        view = TerminalView()
-    elif choice == "2":
-        view = CursesView()
-    else:
-        view = TerminalView()
+    controller.on_message.notify("Iniciando jogo da velha!")
+    controller.on_board_update.notify(model.board)
 
-    controller = TicTacToeController(model, view)
-    controller.play_game()
+    running = True
 
+    def stop_game():
+        nonlocal running
+        running = False
+    controller.on_game_over.subscribe(stop_game)
+
+    while running:
+        move = view.get_move()
+        controller.play_turn(move)
 
 if __name__ == "__main__":
     main()

@@ -2,30 +2,28 @@ import os
 
 
 class TerminalView:
+    def __init__(self, controller):
+        self.controller = controller
+        # Inscreve callbacks
+        controller.on_message.subscribe(self.display_message)
+        controller.on_board_update.subscribe(self.display_board)
+        controller.on_game_over.subscribe(self.cleanup)
+
     def display_board(self, board):
-        """Exibe o tabuleiro no terminal com coordenadas estilo xadrez"""
+        # Limpa a tela antes de redesenhar
         os.system('cls' if os.name == 'nt' else 'clear')
 
-        # Cabeçalho das colunas
-        header = "    A   B   C"
-        print(header)
-
-        # Cada linha numerada
+        print("    A   B   C")
         for i, row in enumerate(board, start=1):
-            row_display = " | ".join(row)
-            print(f"{i}   {row_display}")
+            print(f"{i}   {' | '.join(row)}")
             if i < 3:
                 print("   ---+---+---")
 
     def display_message(self, message):
-        """Exibe uma mensagem no terminal"""
         print(message)
 
     def get_move(self):
-        """Obtém a jogada do jogador no formato estilo xadrez (ex: A1, 1a, etc.)"""
-        move = input("Digite sua jogada (ex: A1, 1a, b2): ").strip()
+        return input("Digite sua jogada (ex: A1, 1a, B2): ").strip().upper()
 
-        # Normaliza para maiúsculas
-        move = move.upper()
-
-        return move
+    def cleanup(self):
+        print("Fim de jogo.")

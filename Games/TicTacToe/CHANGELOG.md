@@ -7,6 +7,20 @@ e este projeto adere a [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ## [Unreleased]
 - Em desenvolvimento...
 
+## [0.3.0] - 2025-10-09
+### Adicionado
+- Implementação do padrão Observer no `TicTacToeController`
+- Classe `Event` em `observer.py` para gerenciar subscrições
+- Novos eventos: `on_message`, `on_board_update`, `on_game_over`
+
+### Alterado
+- `TerminalView` agora atua como observer:
+  - Limpa tela a cada atualização de tabuleiro
+  - Recebe mensagens via evento `on_message`
+  - Encerra jogo via `on_game_over`
+- `TicTacToe.py` reorganizado com função `main()` e loop controlado por evento
+- `Controller` não depende mais diretamente de nenhuma view → código desacoplado e extensível
+
 ## [0.2.0] - 2025-10-09
 ### Adicionado
 - Módulo `messages.py` para centralizar todas as mensagens do jogo.
