@@ -1,8 +1,9 @@
 from random import choice
-from TicTacToeModel import TicTacToeModel
-from TicTacToeController import TicTacToeController
-from TerminalView import TerminalView
-from CursesView import CursesView
+from Source.TicTacToeModel import TicTacToeModel
+from Source.TicTacToeController import TicTacToeController
+from Source.TerminalView import TerminalView
+from Source.CursesView import CursesView
+
 
 def main():
     model = TicTacToeModel()

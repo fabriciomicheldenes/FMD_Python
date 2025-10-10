@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch
-from TerminalView import TerminalView
+from Source.TerminalView import TerminalView
 
 
 @pytest.fixture
@@ -11,29 +11,25 @@ def terminal_view():
 
 def test_display_board(terminal_view, capsys):
     """Testa se o tabuleiro é exibido corretamente no terminal."""
-    # Configuração de um tabuleiro de exemplo
     board = [
         ['X', 'O', 'X'],
         ['O', 'X', 'O'],
         ['O', 'X', 'X']
     ]
 
-    # Exibe o tabuleiro
     terminal_view.display_board(board)
 
-    # Captura a saída do terminal
     captured = capsys.readouterr()
 
-    print(captured)
-
-    # Verifica se o tabuleiro foi impresso corretamente
     expected_output = (
-        'X | O | X\n'
-        '---+---+---\n'
-        'O | X | O\n'
-        '---+---+---\n'
-        'O | X | X\n'
+        "    A   B   C\n"
+        "1   X | O | X\n"
+        "   ---+---+---\n"
+        "2   O | X | O\n"
+        "   ---+---+---\n"
+        "3   O | X | X\n"
     )
+
     assert captured.out == expected_output
 
 
@@ -49,29 +45,26 @@ def test_display_message(terminal_view, capsys):
     assert captured.out == message + "\n"
 
 
-@patch("builtins.input", side_effect=[0, 1])  # Simula entrada do jogador
+@patch("builtins.input", side_effect=["B2"])
 def test_get_move(mock_input, terminal_view):
     """Testa a captura de movimento do jogador."""
     move = terminal_view.get_move()
 
-    # Verifica se a entrada foi interpretada corretamente
-    assert move == (0, 1)
+    # Verifica se a entrada foi capturada corretamente como string
+    assert move == "B2"
 
 
 # Simula entradas inválida, inválida e válida
-@patch("builtins.input", side_effect=["a", 1, 1, 1])
-def test_get_move_invalid_input(mock_input, capfd):
-    """Testa se o método get_move lida corretamente com entradas inválidas e exibe mensagem de erro."""
-    terminal_view = TerminalView()
+@patch("builtins.input", side_effect=["a11", "1a1", "B2"])
+def test_get_move_invalid_input(mock_input, terminal_view):
+    """Testa se entradas inválidas são retornadas como string crua, 
+    e a última válida é aceita corretamente."""
+    # Aqui não há parsing no TerminalView, só retorna a string
+    move1 = terminal_view.get_move()
+    move2 = terminal_view.get_move()
+    move3 = terminal_view.get_move()
 
-    move = terminal_view.get_move()
+    assert move1 == "A11"   # inválido, mas string crua
+    assert move2 == "1A1"   # inválido, mas string crua
+    assert move3 == "B2"    # válido, string crua
 
-    # Captura a saída padrão (stdout)
-    captured = capfd.readouterr()
-    print(captured)
-
-    # Verifica se a mensagem de erro foi exibida
-    assert "Entrada inválida! Digite números inteiros." in captured.out
-
-    # Verifica se a entrada válida foi capturada corretamente
-    assert move == (1, 1)

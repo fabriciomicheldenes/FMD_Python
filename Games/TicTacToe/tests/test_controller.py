@@ -1,7 +1,15 @@
+from  Source.Messages import (
+    INVALID_INPUT,
+    INVALID_MOVE_OUT_OF_BOUNDS,
+    INVALID_MOVE_OCCUPIED,
+    WINNER,
+    DRAW
+)
+
 import pytest
 from unittest.mock import MagicMock
-from TicTacToeModel import TicTacToeModel
-from TicTacToeController import TicTacToeController
+from Source.TicTacToeModel import TicTacToeModel
+from Source.TicTacToeController import TicTacToeController
 
 
 @pytest.fixture
@@ -36,11 +44,11 @@ def test_play_game_winner(controller, mock_view):
     """
     # Simular jogadas do usuário que levam à vitória de "X"
     mock_view.get_move.side_effect = [
-        (0, 0),  # X
-        (1, 0),  # O
-        (0, 1),  # X
-        (1, 1),  # O
-        (0, 2),  # X - Vitória
+        "A1",  # X
+        "A2",  # O
+        "B1",  # X
+        "B2",  # O
+        "C1",  # X - Vitória
     ]
 
     controller.play_game()
@@ -49,16 +57,16 @@ def test_play_game_winner(controller, mock_view):
     assert mock_view.display_board.call_count >= 5
 
     # Verificar mensagem de vitória
-    mock_view.display_message.assert_any_call("Parabéns! O jogador X venceu!")
+    mock_view.display_message.assert_any_call(WINNER.format(winner="X"))
 
 
 def test_play_game_draw(controller, mock_view):
     """Testa o fluxo do jogo que termina em empate."""
     # Simular jogadas do usuário que resultam em empate
     mock_view.get_move.side_effect = [
-        (0, 0), (1, 1), (2, 0),  # X, X, O
-        (1, 0), (1, 2), (0, 2),  # O, O, X
-        (0, 1), (2, 2), (2, 1),  # X, X, O  - Empate
+        "A1", "B2", "C1",  # X, O, X
+        "B1", "C2", "A3",  # O, X, O
+        "A2", "C3", "B3",  # X, O, X -> Empate
     ]
 
     controller.play_game()
@@ -66,68 +74,86 @@ def test_play_game_draw(controller, mock_view):
     # Verificar que o tabuleiro foi exibido corretamente
     assert mock_view.display_board.call_count >= 9
 
-    # Imprimir todas as chamadas feitas ao método display_message
-    print("Chamadas ao display_message:",
-          mock_view.display_message.call_args_list)
-
     # Verificar mensagem de empate
-    mock_view.display_message.assert_any_call("O jogo terminou em empate!")
+    mock_view.display_message.assert_any_call(DRAW)
 
 
-def test_invalid_move(controller, mock_view):
-    """Testa como o controlador lida com uma jogada inválida."""
-    # Simular jogadas (uma inválida seguida de válidas que terminam o jogo)
+def test_invalid_move_format(controller, mock_view):
+    """Testa como o controlador lida com jogada em formato inválido (ex: A11, 1A1)."""
     mock_view.get_move.side_effect = [
-        (0, 0),  # X - Válida
-        (0, 0),  # O - Inválida (já ocupada)
-        (1, 0),  # O - Válida
-        (0, 1),  # X
-        (1, 1),  # O
-        (0, 2),  # X - Vitória
+        "A11",   # inválido
+        "A1",    # X válido
+        "B1",    # O válido
+        "A2",    # X válido
+        "B2",    # O válido
+        "A3"     # X vence
     ]
 
     controller.play_game()
 
-    # Verificar mensagem de jogada inválida
     mock_view.display_message.assert_any_call(
-        "A posição (0, 0) já está ocupada. Escolha outra!")
-
-    # Verificar mensagem de vitória
-    mock_view.display_message.assert_any_call("Parabéns! O jogador X venceu!")
+        INVALID_INPUT.format(notation="A11")
+    )
+    mock_view.display_message.assert_any_call(
+        WINNER.format(winner="X")
+    )
 
 
 def test_out_of_bounds_move(controller, mock_view):
-    """Testa como o controlador lida com jogadas fora dos limites do tabuleiro."""
-    # Simular jogadas fora dos limites
+    """Testa como o controlador lida com jogada fora dos limites (ex: X9)."""
     mock_view.get_move.side_effect = [
-        (3, 3),  # X - Inválido, fora dos limites
-        (0, 0),  # X - Válida
-        (1, 0),  # O - Válida
-        (0, 1),  # X
-        (1, 1),  # O
-        (0, 2),  # X - Vitória
+        "X9",    # fora dos limites
+        "A1",    # X válido
+        "B1",    # O válido
+        "A2",    # X válido
+        "B2",    # O válido
+        "A3"     # X vence
     ]
 
     controller.play_game()
 
-    # Verificar mensagem de jogada fora dos limites
     mock_view.display_message.assert_any_call(
-        "A posição (3, 3) está fora dos limites. Tente novamente!")
+        INVALID_MOVE_OUT_OF_BOUNDS.format(coords="(8, 23)", notation="X9")
+    )
+    mock_view.display_message.assert_any_call(
+        WINNER.format(winner="X")
+    )
+
+
+def test_occupied_position(controller, mock_view):
+    """Testa como o controlador lida com jogada em posição já ocupada."""
+    mock_view.get_move.side_effect = [
+        "A1",  # X válido
+        "A1",  # O tenta mesma posição
+        "B1",  # O válido
+        "A2",  # X válido
+        "B2",  # O válido
+        "A3"   # X vence
+    ]
+
+    controller.play_game()
+
+    mock_view.display_message.assert_any_call(
+        INVALID_MOVE_OCCUPIED.format(coords="(0, 0)", notation="A1")
+    )
+    mock_view.display_message.assert_any_call(
+        WINNER.format(winner="X")
+    )
 
 
 def test_alternate_players(controller, mock_view):
     """Testa se os jogadores alternam corretamente."""
     # Simular jogadas alternadas
     mock_view.get_move.side_effect = [
-        (0, 0),  # X
-        (1, 0),  # O - Válida
-        (0, 1),  # X
-        (1, 1),  # O
-        (0, 2),  # X - Vitória
+        "A1",  # X
+        "A2",  # O
+        "B1",  # X
+        "B2",  # O
+        "C1",  # X - Vitória
     ]
 
     controller.play_game()
 
     # Verificar que o controlador alternou os jogadores
-    assert controller.model.board[0][0] == "X"
-    assert controller.model.board[1][0] == "O"
+    assert controller.model.board[0][0] == "X"  # A1
+    assert controller.model.board[1][0] == "O"  # A2
