@@ -25,5 +25,5 @@ class TerminalView:
     def get_move(self):
         return input("Digite sua jogada (ex: A1, 1a, B2): ").strip().upper()
 
-    def cleanup(self):
+    def cleanup(self, *args, **kwargs):
         print("Fim de jogo.")
