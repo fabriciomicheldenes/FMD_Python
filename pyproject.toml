@@ -1,0 +1,11 @@
+[project]
+name = "fmd-python"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pytest-watch>=4.2.0",
+    "pytest>=8.4.2",
+    "pytest-cov>=7.0.0",
+]
