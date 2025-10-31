@@ -1,18 +1,22 @@
 # Estrutura do Projeto `FMD_Python`
 
-_Gerado em 2025-10-30 17:22:56_
+_Gerado em 2025-10-30 23:24:12_
 
-- Diretórios: **8**
+- Diretórios: **12**
 - Arquivos: **0**
 
 ```text
 FMD_Python/
 ├── Basico/
+├── docs/
 ├── Games/
 │   ├── Megamania/
 │   │   └── sounds/
 │   └── TicTacToe/
 │       ├── Source/
 │       └── tests/
-└── ScriptsUtilitarios/
+├── GitAutomation/
+└── UtilityScripts/
+    └── ListDirectoryTree/
+        └── tests/
 ```
